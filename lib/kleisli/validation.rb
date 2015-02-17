@@ -3,13 +3,18 @@ require "kleisli/semigroup_instances.rb"
 
 module Kleisli
   class Validation
-    VERSION = "0.0.3"
+    VERSION = "0.0.4"
 
     class Success < Either::Right
 
       def *(other)
         if other.class == Success
-          super
+          self >-> f {
+            f = f.to_proc
+            other >-> val {
+              Success(f.arity > 1 ? f.curry.call(val) : f.call(val))
+            }
+          }
         else
           other
         end
