@@ -42,10 +42,10 @@ Success(add) * Failure("error") * Success(2)
 
 # new case supported by Validation
 add3 = -> x, y, z { x + y + z }
-Success(add) * Failure(["error"]) * Success(2) * Failure(["another error"])
+Success(add3) * Failure(["error"]) * Success(2) * Failure(["another error"])
 # => Failure(["error", "another error"])
 
-Success(add) * Failure(x: "No good") * Success(2)
+Success(add3) * Failure(x: "No good") * Success(2)
 * Failure(x: "Still no good", y: "Also no good")
 # => Failure(x: ["No good", "Still no good"], y: "Also no good")
 ```
