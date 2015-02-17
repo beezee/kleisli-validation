@@ -3,19 +3,10 @@ require "kleisli"
 require "kleisli/semigroup_instances.rb"
 
 module Kleisli
-  class Validation < Either
-    VERSION = "0.0.2"
+  class Validation
+    VERSION = "0.0.3"
 
-    def *(other)
-      self >-> f {
-        other >-> val {
-          Success(f.arity > 1 ? f.curry.call(val) : f.call(val))
-        }
-      }
-    end
-
-    class Success < Validation
-      alias value right
+    class Success < Either::Right
 
       def *(other)
         if other.class == Success
@@ -25,34 +16,13 @@ module Kleisli
         end
       end
 
-      def initialize(right)
-        @right = right
-      end
-
-      def >(f)
-        f.call(@right)
-      end
-
-      def fmap(&f)
-        Success.new(f.call(@right))
-      end
-
-      def to_maybe
-        Maybe::Some.new(@right)
-      end
-
-      def or(other=nil, &other_blk)
-        self
-      end
-
       def to_s
         "Success(#{@right.inspect})"
       end
       alias inspect to_s
     end
 
-    class Failure < Validation
-      alias value left
+    class Failure < Either::Left
 
       def *(other)
         if other.class == Failure
@@ -64,30 +34,6 @@ module Kleisli
           Failure(self.left.sappend(other.left))
         else
           self
-        end
-      end
-
-      def initialize(left)
-        @left = left
-      end
-
-      def >(f)
-        self
-      end
-
-      def fmap(&f)
-        self
-      end
-
-      def to_maybe
-        Maybe::None.new
-      end
-
-      def or(other=self, &other_blk)
-        if other_blk
-          other_blk.call(@left)
-        else
-          other
         end
       end
 
