@@ -32,7 +32,7 @@ The main difference is in the handling of errors when using the applicative
 functor's apply, as seen here.
 
 ```ruby
-require "kleisli"
+require "kleisli-validation"
 
 add = -> x, y { x + y }
 Success(add) * Success(10) * Success(2)
