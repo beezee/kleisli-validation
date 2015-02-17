@@ -4,8 +4,7 @@ require "kleisli/semigroup_instances.rb"
 
 module Kleisli
   class Validation < Either
-    VERSION = "0.0.1"
-    attr_accessor :success, :failure
+    VERSION = "0.0.2"
 
     def *(other)
       self >-> f {
@@ -16,7 +15,7 @@ module Kleisli
     end
 
     class Success < Validation
-      alias value success
+      alias value right
 
       def *(other)
         if other.class == Success
@@ -26,20 +25,20 @@ module Kleisli
         end
       end
 
-      def initialize(success)
-        @success = success
+      def initialize(right)
+        @right = right
       end
 
       def >(f)
-        f.call(@success)
+        f.call(@right)
       end
 
       def fmap(&f)
-        Success.new(f.call(@success))
+        Success.new(f.call(@right))
       end
 
       def to_maybe
-        Maybe::Some.new(@success)
+        Maybe::Some.new(@right)
       end
 
       def or(other=nil, &other_blk)
@@ -47,29 +46,29 @@ module Kleisli
       end
 
       def to_s
-        "Success(#{@success.inspect})"
+        "Success(#{@right.inspect})"
       end
       alias inspect to_s
     end
 
     class Failure < Validation
-      alias value failure
+      alias value left
 
       def *(other)
         if other.class == Failure
-          unless self.failure.class == other.failure.class &&
-                  self.failure.respond_to?(:sappend)
+          unless self.left.class == other.left.class &&
+                  self.left.respond_to?(:sappend)
             raise ArgumentError,
                     "Failures must contain members of a common Semigroup"
           end
-          Failure(self.failure.sappend(other.failure))
+          Failure(self.left.sappend(other.left))
         else
           self
         end
       end
 
-      def initialize(failure)
-        @failure = failure
+      def initialize(left)
+        @left = left
       end
 
       def >(f)
@@ -86,14 +85,14 @@ module Kleisli
 
       def or(other=self, &other_blk)
         if other_blk
-          other_blk.call(@failure)
+          other_blk.call(@left)
         else
           other
         end
       end
 
       def to_s
-        "Failure(#{@failure.inspect})"
+        "Failure(#{@left.inspect})"
       end
       alias inspect to_s
     end

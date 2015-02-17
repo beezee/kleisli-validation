@@ -25,8 +25,7 @@ Or install it yourself as:
 ## Usage
 
 Usage is practically identical to the [Either](https://github.com/txus/kleisli#either)
-Monad provided by kleisli, substituting Success for Right (and .success for .right)
-as well as Failure for Left (and .failure for .left).
+Monad provided by kleisli, substituting Success for Right and Failure for Left.
 
 The main difference is in the handling of errors when using the applicative
 functor's apply, as seen here.
