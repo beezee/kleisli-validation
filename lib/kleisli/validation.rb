@@ -1,4 +1,3 @@
-#require "kleisli/validation/version"
 require "kleisli"
 require "kleisli/semigroup_instances.rb"
 
