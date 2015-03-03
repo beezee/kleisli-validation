@@ -3,7 +3,7 @@ require "kleisli/semigroup_instances.rb"
 
 module Kleisli
   class Validation
-    VERSION = "0.0.4"
+    VERSION = "0.0.5"
 
     class Success < Either::Right
 
@@ -18,6 +18,10 @@ module Kleisli
         else
           other
         end
+      end
+
+      def fmap(&f)
+        Success.new(f.call(@right))
       end
 
       def to_s
